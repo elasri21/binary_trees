@@ -12,14 +12,10 @@ size_t leaves = 0;
 if (tree == NULL)
 return (0);
 if (tree->left != NULL && !tree->left->left && !tree->left->right)
-{
 leaves += 1;
-binary_tree_leaves(tree->left);
-}
 if (tree->right != NULL && !tree->right->left && !tree->right->right)
-{
 leaves += 1;
-binary_tree_leaves(tree->right);
-}
+leaves += binary_tree_leaves(tree->left);
+leaves += binary_tree_leaves(tree->right);
 return (leaves);
 }
