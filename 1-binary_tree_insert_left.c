@@ -21,6 +21,8 @@ node->parent = parent;
 if (parent->left != NULL)
 {
 node->left = binary_tree_insert_left(node, parent->left->n);
+if (node->left == NULL)
+return (NULL);
 parent->left = node;
 }
 else
