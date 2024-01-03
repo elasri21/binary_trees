@@ -4,7 +4,7 @@
 /**
  * binary_tree_height - calculates the height of a tree
  * @tree: the tree to get its height
- * Return: the height of the tree 
+ * Return: the height of the tree
  */
 size_t binary_tree_height(const binary_tree_t *tree)
 {
