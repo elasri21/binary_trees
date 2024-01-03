@@ -20,7 +20,7 @@ node->right = NULL;
 node->parent = parent;
 if (parent->left != NULL)
 {
-node->left = binary_tree_insert_left(parent->left, parent->left->n);
+node->left = binary_tree_insert_left(node, parent->left->n);
 parent->left = node;
 }
 else
