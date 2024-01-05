@@ -1,119 +1,68 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "binary_trees.h"
-int get_balance(const binary_tree_t *tree);
-size_t get_height(const binary_tree_t *tree);
-int binary_is_perfect(const binary_tree_t *tree);
-int is_perfect(const binary_tree_t *tree);
 /**
- * get_height - get height of a tree
+ * tree_size - calculates the size of a tree
  * @tree: tree root
- * Return: height of a tree. 0 otherwise
+ * Return: size of the tree or 0 if tree is NULL;
  */
-size_t get_height(const binary_tree_t *tree)
+size_t tree_size(const binary_tree_t *tree)
 {
-size_t l_h = 0, r_h = 0;
 if (tree == NULL)
 return (0);
-else
-{
-if (tree->left == NULL && tree->right == NULL)
-return (tree->parent != NULL);
-if (tree)
-{
-l_h = tree->left ? 1 + get_height(tree->left) : 0;
-r_h = tree->right ? 1 + get_height(tree->right) : 0;
-}
-return ((l_h > r_h) ? l_h : r_h);
-}
+return (tree_size(tree->left) + tree_size(tree->right) + 1);
 }
 /**
- * get_balance - calculates the balance of a tree
+ * is_complete - checks if tree is complete
  * @tree: tree root
- * Return: the balance factor
+ * @idx: index of the node
+ * @children: number of children
+ * Return: 1 on success. 0 otherwise
  */
-int get_balance(const binary_tree_t *tree)
+int is_complete(const binary_tree_t *tree, int idx, int children)
 {
-int r_h = 0, l_h = 0, factor = 0;
-if (tree)
-{
-l_h = ((int)get_height(tree->left));
-r_h = ((int)get_height(tree->right));
-factor = l_h - r_h;
-}
-return (factor);
-}
-
-/**
- * is_perfect - check if a tree is perfect
- * @tree: tree root
- * Return: 1 on success. 0 on failure
- */
-int is_perfect(const binary_tree_t *tree)
-{
-int l_h = 0, r_h = 0;
-if (tree->left && tree->right)
-{
-l_h = 1 + is_perfect(tree->left);
-r_h = 1 + is_perfect(tree->right);
-if (r_h == l_h && r_h != 0 && l_h != 0)
-return (r_h);
-return (0);
-}
-else if (!tree->left && !tree->right)
-{
+if (tree == NULL)
 return (1);
-}
-else
-{
+if (idx >= children)
 return (0);
-}
+return (is_complete(tree->left, (2 * idx) + 1, children) &&
+is_complete(tree->right, (2 * idx) + 2, children));
 }
 /**
- * binary_is_perfect - checkes if a binary tree is perfect
+ * binary_is_complete - checks if a binary tree is complete
  * @tree: tree root
  * Return: 1 on success. 0 otherwise
  */
-int binary_is_perfect(const binary_tree_t *tree)
+int binary_is_complete(const binary_tree_t *tree)
 {
-int perfect = 0;
+size_t children;
 if (tree == NULL)
 return (0);
-else
-{
-perfect = is_perfect(tree);
-if (perfect != 0)
-return (1);
-return (0);
+children = tree_size(tree);
+return (is_complete(tree, 0, children));
 }
+
+/**
+ * is_parent - checks if a node is parent
+ * @tree: tree root
+ * Return: 1 on success. 0 otherwise
+ */
+int is_parent(const binary_tree_t *tree)
+{
+if (tree == NULL)
+return (1);
+if (tree->n > tree->parent->n)
+return (0);
+return (is_parent(tree->left) && is_parent(tree->right));
 }
 /**
- * binary_tree_is_heap - check if a binary tree is heap
+ * binary_tree_is_heap - checks if a tree is heap
  * @tree: tree root
  * Return: 1 on success. 0 otherwise
  */
 int binary_tree_is_heap(const binary_tree_t *tree)
 {
-int factor;
-if (tree == NULL)
+if (!binary_is_complete(tree))
 return (0);
-if (tree->left && tree->left->n > tree->n)
-return (0);
-if (tree->right && tree->right->n > tree->n)
-return (0);
-if (binary_is_perfect(tree))
-return (1);
-factor = get_balance(tree);
-if (factor == 0)
-{
-return (binary_is_perfect(tree->left)
-&& binary_tree_is_heap(tree->right));
-}
-if (factor == 1)
-{
-return (binary_tree_is_heap(tree->left)
-&& binary_is_perfect(tree->right));
-}
-else
-return (0);
+return (is_parent(tree->left) && is_parent(tree->right));
 }
